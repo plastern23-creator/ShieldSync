@@ -29,7 +29,7 @@ jobs:
 
       - name: Bundle Web App with Yarn and Capacitor
         run: |
-          JSX_FILE=$(find "$GITHUB_WORKSPACE" -maxdepth 2 \( -name "*.jsx" -o -name "*.tsx" \) | head -n 1)
+          JSX_FILE=$(grep -rl "import React" "$GITHUB_WORKSPACE" --exclude-dir=".git" --exclude-dir=".github" | head -n 1)
 
           mkdir -p /tmp/shieldsync-build/src
           cd /tmp/shieldsync-build
