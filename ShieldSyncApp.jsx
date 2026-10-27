@@ -356,4 +356,251 @@ export default function ShieldSyncApp() {
                         key={sq}
                         type="button"
                         onClick={() => setSelectedSquad(sq)}
-                        className={`px-4 py-2 rounded-xl text-xs font-semibold
+                        className={`px-4 py-2 rounded-xl text-xs font-semibold border transition ${selectedSquad === sq ? 'bg-cyan-500 text-white border-cyan-400' : 'bg-slate-950/60 text-slate-400 border-white/10'}`}
+                      >
+                        {sq}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {setupStep === 2 && (
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-cyan-400 uppercase tracking-wider">2. Select Off-Duty Detail Platforms</h3>
+                <p className="text-xs text-slate-400">Choose which secondary employment networks your department uses to pull jobs and confirmations.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[
+                    { id: 'RollKall', name: 'RollKall', desc: 'Automated email parser & direct scheduling sync' },
+                    { id: 'PowerDetails', name: 'PowerDetails', desc: 'Real-time shift bidding & calendar export' },
+                    { id: 'OfficerTRAK', name: 'OfficerTRAK (Off Duty Mgt)', desc: 'Enterprise law enforcement detail portal' },
+                    { id: 'DetailKommander', name: 'Detail Kommander', desc: 'Secondary employment dispatch integration' },
+                    { id: 'Private', name: 'Direct Commercial Contracts', desc: 'Direct corporate & private security gigs' }
+                  ].map((app) => {
+                    const isSelected = selectedApps.includes(app.id);
+                    return (
+                      <div 
+                        key={app.id}
+                        onClick={() => {
+                          if (isSelected) {
+                            setSelectedApps(selectedApps.filter(a => a !== app.id));
+                          } else {
+                            setSelectedApps([...selectedApps, app.id]);
+                          }
+                        }}
+                        className={`p-4 rounded-2xl border cursor-pointer transition flex items-start justify-between ${isSelected ? 'bg-cyan-500/20 border-cyan-500/60 shadow-lg shadow-cyan-500/20' : 'bg-slate-950/50 border-white/10 hover:border-white/25'}`}
+                      >
+                        <div>
+                          <h4 className="text-sm font-bold text-white mb-1">{app.name}</h4>
+                          <p className="text-xs text-slate-400">{app.desc}</p>
+                        </div>
+                        <div className={`w-5 h-5 rounded-lg flex items-center justify-center border ${isSelected ? 'bg-cyan-500 border-cyan-400 text-white' : 'border-white/20'}`}>
+                          {isSelected && <Check className="w-3.5 h-3.5" />}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {setupStep === 3 && (
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-cyan-400 uppercase tracking-wider">3. Choose Master Calendar Destination</h3>
+                <p className="text-xs text-slate-400">Where would you like your merged master schedule (Primary Shift + Off-Duty Gigs + Court) to sync?</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { id: 'apple', name: 'Apple Calendar', desc: 'iCal webfeed sync (.ics)' },
+                    { id: 'google', name: 'Google Calendar', desc: 'Direct two-way OAuth sync' },
+                    { id: 'outlook', name: 'Microsoft Outlook / 365', desc: 'Exchange calendar integration' }
+                  ].map((cal) => (
+                    <div 
+                      key={cal.id}
+                      onClick={() => setSelectedCalendar(cal.id)}
+                      className={`p-4 rounded-2xl border cursor-pointer transition text-center ${selectedCalendar === cal.id ? 'bg-cyan-500/20 border-cyan-500/60 shadow-lg shadow-cyan-500/20' : 'bg-slate-950/50 border-white/10 hover:border-white/25'}`}
+                    >
+                      <h4 className="text-sm font-bold text-white mb-1">{cal.name}</h4>
+                      <p className="text-xs text-slate-400">{cal.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {setupStep === 4 && (
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-cyan-400 uppercase tracking-wider">4. Tax & Fatigue Guardrails</h3>
+                <p className="text-xs text-slate-400">Configure your tax withholding brackets for 1099 earnings and agency fatigue limits.</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">Federal Marginal Rate (%)</label>
+                    <input 
+                      type="number" 
+                      value={federalRate}
+                      onChange={(e) => setFederalRate(Number(e.target.value))}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-slate-950/60 border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">State Tax Rate (%)</label>
+                    <input 
+                      type="number" 
+                      value={stateRate}
+                      onChange={(e) => setSateRate(Number(e.target.value))}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-slate-950/60 border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">Max Daily Combined Hours</label>
+                    <input 
+                      type="number" 
+                      value={maxDailyHours}
+                      onChange={(e) => setMaxDailyHours(Number(e.target.value))}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-slate-950/60 border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">Max Weekly Rolling Cap</label>
+                    <input 
+                      type="number" 
+                      value={maxWeeklyHours}
+                      onChange={(e) => setMaxWeeklyHours(Number(e.target.value))}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-slate-950/60 border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center mt-8 pt-6 border-t border-white/10">
+              {setupStep > 1 ? (
+                <button 
+                  onClick={() => setSetupStep(setupStep - 1)}
+                  className="px-5 py-2.5 rounded-2xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition"
+                >
+                  Back
+                </button>
+              ) : <div></div>}
+
+              {setupStep < 4 ? (
+                <button 
+                  onClick={() => setSetupStep(setupStep + 1)}
+                  className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-semibold shadow-lg shadow-cyan-500/25 flex items-center gap-2 hover:from-cyan-400 hover:to-blue-500 transition"
+                >
+                  Continue
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <button 
+                  onClick={() => setIsSetupComplete(true)}
+                  className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-semibold shadow-lg shadow-emerald-500/25 flex items-center gap-2 hover:from-emerald-400 hover:to-teal-500 transition"
+                >
+                  Complete Mission Setup
+                  <Check className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+
+          /* VIEW 3: MAIN APP DASHBOARD (APPLE LIQUID GLASS / ARGON TACTICAL HUD) */
+          <div className="space-y-6">
+            
+            {/* Top Quick Stats Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-5 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 shadow-xl relative overflow-hidden">
+                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl"></div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Projected 1099 Gross</span>
+                  <DollarSign className="w-5 h-5 text-cyan-400" />
+                </div>
+                <div className="text-2xl font-bold text-white">${total1099Earnings.toLocaleString()}</div>
+                <div className="text-[11px] text-cyan-300 mt-1 flex items-center gap-1">
+                  <span>{details.length} active detail shifts logged</span>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 shadow-xl relative overflow-hidden">
+                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-500/10 rounded-full blur-2xl"></div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Est. SECA & Income Tax</span>
+                  <BarChart3 className="w-5 h-5 text-rose-400" />
+                </div>
+                <div className="text-2xl font-bold text-white">${Math.round(totalEstimatedTax).toLocaleString()}</div>
+                <div className="text-[11px] text-rose-300 mt-1 flex items-center gap-1">
+                  <span>Recommended {recommendedSetAside}% set-aside rate</span>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 shadow-xl relative overflow-hidden">
+                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl"></div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Fatigue Compliance</span>
+                  <Shield className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div className="text-2xl font-bold text-emerald-400">100% Secure</div>
+                <div className="text-[11px] text-slate-400 mt-1">
+                  <span>0 over-cap violations detected</span>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 shadow-xl relative overflow-hidden">
+                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl"></div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rotation & Squad</span>
+                  <Clock className="w-5 h-5 text-indigo-400" />
+                </div>
+                <div className="text-xl font-bold text-white capitalize">{selectedRotation.replace('_', ' ')}</div>
+                <div className="text-[11px] text-indigo-300 mt-1">
+                  <span>Active: {selectedSquad}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation Tab Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-2 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 shadow-xl">
+              <div className="flex items-center gap-2 overflow-x-auto">
+                <button 
+                  onClick={() => setActiveTab('schedule')}
+                  className={`px-4 py-2 rounded-2xl text-xs font-semibold transition flex items-center gap-2 ${activeTab === 'schedule' ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/30' : 'text-slate-400 hover:text-white'}`}
+                >
+                  <CalendarIcon className="w-4 h-4" />
+                  Master Calendar
+                </button>
+                <button 
+                  onClick={() => setActiveTab('tax')}
+                  className={`px-4 py-2 rounded-2xl text-xs font-semibold transition flex items-center gap-2 ${activeTab === 'tax' ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/30' : 'text-slate-400 hover:text-white'}`}
+                >
+                  <DollarSign className="w-4 h-4" />
+                  1099 Tax Engine & Deductions
+                </button>
+                <button 
+                  onClick={() => setActiveTab('parser')}
+                  className={`px-4 py-2 rounded-2xl text-xs font-semibold transition flex items-center gap-2 ${activeTab === 'parser' ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/30' : 'text-slate-400 hover:text-white'}`}
+                >
+                  <Mail className="w-4 h-4" />
+                  Detail Parser
+                </button>
+              </div>
+
+              <button 
+                onClick={() => setShowAddModal(true)}
+                className="px-4 py-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25 flex items-center gap-2 transition"
+              >
+                <Plus className="w-4 h-4" />
+                Add Detail / Shift
+              </button>
+            </div>
+
+            {/* TAB CONTENT 1: MASTER CALENDAR & FATIGUE */}
+            {activeTab === 'schedule' && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* Left 2 Cols: Schedule List & Calendar View */}
+                <div className="lg:col-span-2 space-y-6">
+                  <div className="p-6 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 shadow-xl">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="text-base font-bold text-white">Upcoming Shifts & Off-Duty Gigs</h3>
+                        <p className="text-xs text-slate-400">Merged agency patrol rotation and secondary assignments</p>
