@@ -29,16 +29,22 @@ jobs:
 
       - name: Bundle Web App with Yarn and Capacitor
         run: |
-          JSX_FILE=$(grep -rl "import React" "$GITHUB_WORKSPACE" --exclude-dir=".git" --exclude-dir=".github" | head -n 1)
+          # Locate your React app file in the repository
+          JSX_FILE=$(find "$GITHUB_WORKSPACE" -maxdepth 2 \( -name "*.jsx" -o -name "*.tsx" \) | head -n 1)
+          
+          if [ -z "$JSX_FILE" ]; then
+            echo "ERROR: No .jsx or .tsx file found in repository root!"
+            exit 1
+          fi
 
+          echo "Found React app file at: $JSX_FILE"
+
+          # Create clean build folder
           mkdir -p /tmp/shieldsync-build/src
           cd /tmp/shieldsync-build
 
-          if [ -n "$JSX_FILE" ]; then
-            cp "$JSX_FILE" src/App.jsx
-          else
-            echo "export default function App() { return <div style={{color:'white',padding:20}}>ShieldSync Ready</div> }" > src/App.jsx
-          fi
+          # Directly copy your actual repository .jsx file over as App.jsx
+          cp "$JSX_FILE" src/App.jsx
 
           cat << 'EOF' > package.json
           {
@@ -91,6 +97,7 @@ jobs:
 
           yarn install
           yarn vite build
+
           yarn cap init "ShieldSync" "com.shieldsync.app" --web-dir dist
           yarn cap add android
           yarn cap sync android
