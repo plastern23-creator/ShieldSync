@@ -604,3 +604,340 @@ export default function ShieldSyncApp() {
                       <div>
                         <h3 className="text-base font-bold text-white">Upcoming Shifts & Off-Duty Gigs</h3>
                         <p className="text-xs text-slate-400">Merged agency patrol rotation and secondary assignments</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => setCalendarView('month')}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${calendarView === 'month' ? 'bg-slate-800 text-cyan-400 border border-cyan-500/40' : 'text-slate-400 hover:text-white'}`}
+                        >
+                          Month View
+                        </button>
+                        <button 
+                          onClick={() => setCalendarView('week')}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${calendarView === 'week' ? 'bg-slate-800 text-cyan-400 border border-cyan-500/40' : 'text-slate-400 hover:text-white'}`}
+                        >
+                          Week Focus
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      {details.map((detail) => (
+                        <div key={detail.id} className="p-4 rounded-2xl bg-slate-950/60 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-bold text-sm">
+                              {detail.hours}h
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-bold text-white">{detail.title}</h4>
+                              <p className="text-xs text-slate-400">{detail.location} • {detail.date}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                            <div className="text-right">
+                              <span className="text-sm font-bold text-emerald-400">${detail.hours * detail.rate}</span>
+                              <p className="text-[10px] text-slate-400">${detail.rate}/hr ({detail.platform})</p>
+                            </div>
+                            <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-semibold text-emerald-300">
+                              {detail.status}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Col: Fatigue Guard & Platform Sync Status */}
+                <div className="space-y-6">
+                  <div className="p-6 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 shadow-xl">
+                    <h3 className="text-base font-bold text-white mb-2">Fatigue & Compliance Guard</h3>
+                    <p className="text-xs text-slate-400 mb-4">Monitoring combined primary shift and secondary detail work hours.</p>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between text-xs font-semibold mb-1">
+                          <span className="text-slate-300">Weekly Rolling Hours (Max 64h)</span>
+                          <span className="text-cyan-400">42 / 64 hrs</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-slate-950 overflow-hidden border border-white/10">
+                          <div className="h-full bg-cyan-500 rounded-full" style={{ width: '65%' }}></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs font-semibold mb-1">
+                          <span className="text-slate-300">Daily Rest Turnaround</span>
+                          <span className="text-emerald-400">11.5 hrs rest</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-slate-950 overflow-hidden border border-white/10">
+                          <div className="h-full bg-emerald-500 rounded-full" style={{ width: '85%' }}></div>
+                        </div>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-3">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                        <p className="text-xs text-emerald-200">All shifts comply with department secondary employment and fatigue policies.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-6 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 shadow-xl">
+                    <h3 className="text-base font-bold text-white mb-2">Calendar & Platform Sync</h3>
+                    <p className="text-xs text-slate-400 mb-4">Active sync feeds connected to your device.</p>
+                    <div className="space-y-2 text-xs text-slate-300">
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-white/10">
+                        <span>Master Calendar ({selectedCalendar})</span>
+                        <span className="text-emerald-400 font-semibold">Synced</span>
+                      </div>
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-white/10">
+                        <span>Active Platforms</span>
+                        <span className="text-cyan-400 font-semibold">{selectedApps.join(', ')}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* TAB CONTENT 2: 1099 TAX ENGINE & DEDUCTIONS */}
+            {activeTab === 'tax' && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* Left 2 Cols: Tax Breakdown & Vouchers */}
+                <div className="lg:col-span-2 space-y-6">
+                  <div className="p-6 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 shadow-xl">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="text-base font-bold text-white">1099 Tax Engine & Withholding Planner</h3>
+                        <p className="text-xs text-slate-400">Calculates SECA self-employment tax, Federal, and State tax liabilities.</p>
+                      </div>
+                      <span className="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-xs font-semibold">
+                        Federal {federalRate}% | State {stateRate}%
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                      <div className="p-4 rounded-2xl bg-slate-950/60 border border-white/10">
+                        <span className="text-xs text-slate-400">Gross 1099 Income</span>
+                        <div className="text-xl font-bold text-white mt-1">${total1099Earnings.toLocaleString()}</div>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-slate-950/60 border border-white/10">
+                        <span className="text-xs text-slate-400">Schedule C Write-offs</span>
+                        <div className="text-xl font-bold text-emerald-400 mt-1">-${totalDeductions.toLocaleString()}</div>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-slate-950/60 border border-white/10">
+                        <span className="text-xs text-slate-400">Net Taxable Profit</span>
+                        <div className="text-xl font-bold text-cyan-400 mt-1">${net1099Profit.toLocaleString()}</div>
+                      </div>
+                    </div>
+
+                    <h4 className="text-sm font-bold text-white mb-3">IRS Form 1040-ES Quarterly Estimated Tax Vouchers</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                      {[
+                        { q: 'Q1 Voucher', due: 'Apr 15', amount: totalEstimatedTax / 4 },
+                        { q: 'Q2 Voucher', due: 'Jun 15', amount: totalEstimatedTax / 4 },
+                        { q: 'Q3 Voucher', due: 'Sep 15', amount: totalEstimatedTax / 4 },
+                        { q: 'Q4 Voucher', due: 'Jan 15', amount: totalEstimatedTax / 4 }
+                      ].map((v) => (
+                        <div key={v.q} className="p-3.5 rounded-2xl bg-slate-950/60 border border-white/10 text-center">
+                          <span className="text-xs font-bold text-cyan-400">{v.q}</span>
+                          <div className="text-sm font-bold text-white mt-1">${Math.round(v.amount).toLocaleString()}</div>
+                          <span className="text-[10px] text-slate-400">Due {v.due}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Col: Schedule C Deductions Manager */}
+                <div className="space-y-6">
+                  <div className="p-6 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 shadow-xl">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="text-base font-bold text-white">Schedule C Write-offs</h3>
+                        <p className="text-xs text-slate-400">LE gear & mileage deductions</p>
+                      </div>
+                      <span className="text-sm font-bold text-emerald-400">-${totalDeductions}</span>
+                    </div>
+
+                    <div className="space-y-2 mb-4">
+                      {deductions.map((ded) => (
+                        <div key={ded.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-white/10 text-xs">
+                          <span className="text-slate-300">{ded.category}</span>
+                          <span className="text-emerald-400 font-bold">${ded.amount}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button 
+                      onClick={() => {
+                        const cat = prompt("Enter expense category (e.g. Duty Boots, Radio Battery):");
+                        const amt = Number(prompt("Enter amount ($):"));
+                        if (cat && amt) {
+                          setDeductions([...deductions, { id: Date.now(), category: cat, amount: amt }]);
+                        }
+                      }}
+                      className="w-full py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-white/10 transition flex items-center justify-center gap-2"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Add Deduction Expense
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* TAB CONTENT 3: DETAIL PARSER SIMULATOR */}
+            {activeTab === 'parser' && (
+              <div className="max-w-2xl mx-auto p-8 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 shadow-xl space-y-6">
+                <div>
+                  <h3 className="text-lg font-bold text-white">RollKall / PowerDetails Email Ingestion Parser</h3>
+                  <p className="text-xs text-slate-400">Paste your raw shift confirmation notification or email below to automatically extract job details and pay.</p>
+                </div>
+
+                <div>
+                  <textarea 
+                    rows={4}
+                    value={rawParserText}
+                    onChange={(e) => setRawParserText(e.target.value)}
+                    className="w-full p-4 rounded-2xl bg-slate-950/60 border border-white/10 text-white text-xs focus:outline-none focus:border-cyan-500 font-mono"
+                  ></textarea>
+                </div>
+
+                <button 
+                  onClick={handleParseText}
+                  className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25 transition flex items-center justify-center gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Parse Shift Data
+                </button>
+
+                {parserResult && (
+                  <div className="p-5 rounded-2xl bg-cyan-500/10 border border-cyan-500/40 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-cyan-300">Successfully Extracted ({parserResult.confidence} Match)</span>
+                      <span className="text-xs font-bold text-emerald-400">${parserResult.earnings} total</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-300">
+                      <div><strong className="text-white">Title:</strong> {parserResult.title}</div>
+                      <div><strong className="text-white">Platform:</strong> {parserResult.platform}</div>
+                      <div><strong className="text-white">Date:</strong> {parserResult.date}</div>
+                      <div><strong className="text-white">Location:</strong> {parserResult.location}</div>
+                    </div>
+                    <button 
+                      onClick={handleAcceptParsed}
+                      className="w-full py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold shadow-lg transition flex items-center justify-center gap-2 mt-2"
+                    >
+                      <Check className="w-4 h-4" />
+                      Add to Master Schedule & Tax Engine
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+          </div>
+        )}
+
+        {/* MODAL: ADD NEW DETAIL */}
+        {showAddModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+            <div className="w-full max-w-md p-6 rounded-3xl bg-slate-900 border border-white/20 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <h3 className="text-lg font-bold text-white">Log New Off-Duty Detail</h3>
+                <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleAddDetail} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Detail Title / Client</label>
+                  <input 
+                    type="text" 
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    required
+                    placeholder="e.g. Bank Security Detail"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-950 border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">Platform</label>
+                    <select 
+                      value={newPlatform}
+                      onChange={(e) => setNewPlatform(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-slate-950 border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    >
+                      <option value="RollKall">RollKall</option>
+                      <option value="PowerDetails">PowerDetails</option>
+                      <option value="OfficerTRAK">OfficerTRAK</option>
+                      <option value="DetailKommander">Detail Kommander</option>
+                      <option value="Direct Contract">Direct Contract</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">Date</label>
+                    <input 
+                      type="date" 
+                      value={newDate}
+                      onChange={(e) => setNewDate(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-slate-950 border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">Total Hours</label>
+                    <input 
+                      type="number" 
+                      value={newHours}
+                      onChange={(e) => setNewHours(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-slate-950 border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">Hourly Rate ($)</label>
+                    <input 
+                      type="number" 
+                      value={newRate}
+                      onChange={(e) => setNewRate(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-slate-950 border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Location / Address</label>
+                  <input 
+                    type="text" 
+                    value={newLocation}
+                    onChange={(e) => setNewLocation(e.target.value)}
+                    placeholder="e.g. 150 S. Wilmington St"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-950 border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+
+                <button 
+                  type="submit"
+                  className="w-full py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-600 text-white font-semibold text-sm shadow-lg shadow-cyan-500/30 transition flex items-center justify-center gap-2 mt-4"
+                >
+                  <Check className="w-4 h-4" />
+                  Save Detail to Calendar & Tax Engine
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
